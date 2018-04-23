@@ -2,7 +2,7 @@ from pypict import capi
 
 
 class Task(object):
-    def __init__(self):
+    def __init__(self, seed=capi.DEFAULT_RANDOM_SEED):
         self.handle = capi.createTask()
         self._model = _Model()
         capi.setRootModel(self.handle, self._model.handle)
@@ -38,10 +38,11 @@ class _Model(object):
         if self.handle != 0 and self._owned:
             capi.deleteModel(self.handle)
 
-    def add_parameter(self, count, order, weights):
+    def add_parameter(
+            self, count, order=capi.PAIRWISE_GENERATION, weights=None):
         return capi.addParameter(self.handle, count, order, weights)
 
-    def attach_child_model(self, order):
+    def attach_child_model(self, order, seed=capi.DEFAULT_RANDOM_SEED):
         childModel = _Model()
         capi.attachChildModel(self.handle, childModel.handle, order)
         childModel._owned = False
