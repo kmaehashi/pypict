@@ -30,7 +30,7 @@ class TestCAPI(unittest.TestCase):
         self.assertEqual(1, capi.getTotalParameterCount(task))
         capi.addParameter(model, 4, order=3)
         self.assertEqual(2, capi.getTotalParameterCount(task))
-        capi.addParameter(model, 3, order=2, valueWeights=[5, 1, 1])
+        capi.addParameter(model, 3, order=2, valueWeights=(5, 1, 1))
         self.assertEqual(3, capi.getTotalParameterCount(task))
         capi.deleteTask(task)
         capi.deleteModel(model)
@@ -51,15 +51,15 @@ class TestCAPI(unittest.TestCase):
         task = capi.createTask()
         model = capi.createModel()
         capi.setRootModel(task, model)
-        p1 = capi.addParameter(model, 2, 2, [1, 1])  # axis-X
-        p2 = capi.addParameter(model, 3, 2, [2, 1, 1])  # axis-Y
+        p1 = capi.addParameter(model, 2, 2, (1, 1))  # axis-X
+        p2 = capi.addParameter(model, 3, 2, (2, 1, 1))  # axis-Y
         paramCount = capi.getTotalParameterCount(task)
         self.assertEqual(2, paramCount)
 
-        capi.addExclusion(task, [(p1, 0), (p2, 2)])
-        capi.addExclusion(task, [(p1, 1), (p2, 0)])
+        capi.addExclusion(task, ((p1, 0), (p2, 2)))
+        capi.addExclusion(task, ((p1, 1), (p2, 0)))
 
-        capi.addSeed(task, [(p1, 0), (p2, 0)])
+        capi.addSeed(task, ((p1, 0), (p2, 0)))
 
         capi.generate(task)
         capi.resetResultFetching(task)

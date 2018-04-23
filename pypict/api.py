@@ -16,10 +16,10 @@ class Task(object):
         return self._model
 
     def add_exclusion(self, items):
-        capi.addExclusion(self.handle, items)
+        capi.addExclusion(self.handle, tuple(items))
 
     def add_seed(self, items):
-        capi.addSeed(self.handle, items)
+        capi.addSeed(self.handle, tuple(items))
 
     def generate(self):
         capi.generate(self.handle)
@@ -40,6 +40,8 @@ class _Model(object):
 
     def add_parameter(
             self, count, order=capi.PAIRWISE_GENERATION, weights=None):
+        if weights is not None:
+            weights = tuple(weights)
         return capi.addParameter(self.handle, count, order, weights)
 
     def attach_child_model(self, order, seed=capi.DEFAULT_RANDOM_SEED):

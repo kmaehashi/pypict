@@ -141,7 +141,7 @@ cpdef void setRootModel(size_t task, size_t model):
     PictSetRootModel(<PICT_HANDLE>task, <PICT_HANDLE>model)
 
 
-cpdef void addExclusion(size_t task, list items):
+cpdef void addExclusion(size_t task, tuple items):
     cdef size_t count = len(items)
     cdef PICT_EXCLUSION_ITEM* packed = NULL
     if count == 0:
@@ -158,7 +158,7 @@ cpdef void addExclusion(size_t task, list items):
         free(packed)
 
 
-cpdef void addSeed(size_t task, list items):
+cpdef void addSeed(size_t task, tuple items):
     cdef size_t count = len(items)
     cdef PICT_SEED_ITEM* packed = NULL
     if count == 0:
@@ -215,7 +215,7 @@ cpdef size_t addParameter(
         size_t model,
         size_t valueCount,
         unsigned int order = PICT_PAIRWISE_GENERATION,
-        list valueWeights = None):
+        tuple valueWeights = None):
     cdef unsigned int* packed = NULL
     try:
         if valueWeights is not None:
