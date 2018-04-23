@@ -101,6 +101,20 @@ cdef extern from "pictapi.h":
         const PICT_HANDLE model)
 
 
+##################################################
+# Constants
+##################################################
+
+
+PAIRWISE_GENERATION = PICT_PAIRWISE_GENERATION
+DEFAULT_RANDOM_SEED = PICT_DEFAULT_RANDOM_SEED
+
+
+##################################################
+# Error Handling
+##################################################
+
+
 cdef void check_retcode(PICT_RET_CODE code):
     if code == PICT_SUCCESS:
         return
@@ -109,6 +123,11 @@ cdef void check_retcode(PICT_RET_CODE code):
     elif code == PICT_GENERATION_ERROR:
         raise RuntimeError('internal engine error')
     raise RuntimeError('unexpected error ({})'.format(code))
+
+
+##################################################
+# Interface
+##################################################
 
 
 cpdef size_t createTask():
