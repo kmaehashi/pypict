@@ -14,3 +14,14 @@ $ git submodule update
 $ python setup.py build_pict
 $ pip install -U .
 ```
+
+APIs
+----
+
+There are four different APIs provided in this library.
+
+* Low-level API (``pypict.capi``) provides Python functions that map to each PICT C API function.
+* High-level API (``pypict.api``) wraps the low-level API to provide automatic memory management.
+* Tools API (``pypict.tools``) wraps the high-level API to provide convenient features.
+* Command API (``pypict.cmd``) is a thin wrapper for ``pict`` command.
+  Note that this API does not use features from PICT C API shared library.
