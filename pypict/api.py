@@ -2,9 +2,9 @@ from pypict import capi
 
 
 class Task(object):
-    def __init__(self, seed=capi.DEFAULT_RANDOM_SEED):
+    def __init__(self, seed=None):
         self.handle = capi.createTask()
-        self._model = _Model()
+        self._model = _Model(seed)
         capi.setRootModel(self.handle, self._model.handle)
 
     def __del__(self):
@@ -30,8 +30,10 @@ class Task(object):
 
 
 class _Model(object):
-    def __init__(self):
-        self.handle = capi.createModel()
+    def __init__(self, seed=None):
+        if seed is None:
+            seed = capi.DEFAULT_RANDOM_SEED
+        self.handle = capi.createModel(seed)
         self._owned = True
 
     def __del__(self):
@@ -44,8 +46,10 @@ class _Model(object):
             weights = tuple(weights)
         return capi.addParameter(self.handle, count, order, weights)
 
-    def attach_child_model(self, order, seed=capi.DEFAULT_RANDOM_SEED):
-        childModel = _Model()
+    def attach_child_model(self, order, seed=None):
+        if seed is None:
+            seed = capi.DEFAULT_RANDOM_SEED
+        childModel = _Model(seed)
         capi.attachChildModel(self.handle, childModel.handle, order)
         childModel._owned = False
         return childModel
