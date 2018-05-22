@@ -64,11 +64,11 @@ def compose_filter_funcs(*funcs):
 
     To accept the case, all functions must return True.
     """
-    def _composed(**kwargs):
+    def _composed(combination):
         for func in funcs:
             accepted = True
             try:
-                accepted = func(**kwargs)
+                accepted = func(**combination)
             except TypeError:
                 accepted = True
             if not accepted:
@@ -84,9 +84,8 @@ def product(params):
 
 
 def _populate_exclusion_rules(params, filter_func, initial_rules=[]):
-    rules = list(initial_rules)  # copy
+    rules = set([tuple(rule.items()) for rule in initial_rules])
 
-    # TODO: need performance improvement.
     for r in range(1, len(params) + 1):
         # Pick r keys (1 <= r <= len(params)) from all parameter keys.
         for subkeys in itertools.combinations(params.keys(), r):
@@ -94,34 +93,8 @@ def _populate_exclusion_rules(params, filter_func, initial_rules=[]):
             # values for the picked keys.
             # Then check if each parameter value set is excluded or not.
             for subvalue in itertools.product(*[params[k] for k in subkeys]):
-                case = dict(zip(subkeys, subvalue))
-                if (not _case_match(case, rules) and not filter_func(**case)):
+                case = tuple(zip(subkeys, subvalue))
+                if not case in rules and not filter_func(dict(case)):
                     # Need to add new rule to exclude the current case.
-                    rules.append(case)
-    return rules
-
-
-def _case_match(case, rules):
-    for rule in rules:
-        # Rule is only effective if all keys in the rule exists in the case.
-        applicable = True
-        for k in rule.keys():
-            if k not in case:
-                applicable = False
-                break
-        if not applicable:
-            # Try next rule.
-            continue
-
-        # Check the rule against the case.
-        match = True
-        for key, val in rule.items():
-            if case[key] != val:
-                # Rule does not match the case.
-                match = False
-                break
-        if match:
-            return True
-
-    # No rule matched the case.
-    return False
+                    rules.add(case)
+    return [dict(rule) for rule in rules]
