@@ -1,3 +1,5 @@
+from datetime import datetime
+from collections import OrderedDict
 import unittest
 
 from pypict.cmd import from_model
@@ -5,7 +7,6 @@ from pypict.cmd import from_model
 from pypict.tools import from_dict
 from pypict.tools import compose_filter_funcs
 from pypict.tools import product
-from pypict.tools import _case_match
 from pypict.tools import _populate_exclusion_rules
 
 
@@ -132,23 +133,29 @@ def _validate_cuda_nccl(cuda, nccl):
 
 def assert_dict_set_equal(self, ds1, ds2):
     self.assertEqual(
-        sorted([d.items() for d in ds1]),
-        sorted([d.items() for d in ds2]),
+        sorted([tuple(e) for e in [d.items() for d in ds1]]),
+        sorted([tuple(e) for e in [d.items() for d in ds2]]),
     )
 
 
 class TestFromDict(unittest.TestCase):
     def test_usecase(self):
+        begin = datetime.now()
         api_cases = list(from_dict(
-                        dict(_test_axes),
+                        OrderedDict(_test_axes),
                         compose_filter_funcs(
                             _validate_numpy_python,
                             _validate_ideep_python,
                             _validate_ideep_numpy,
                             _validate_cuda_cudnn,
                             _validate_cuda_nccl,
-                        )))
-        cmd_cols, cmd_rows = list(from_model(_model))
+                        ), random_seed=1))
+        print('from_dict: {}'.format(datetime.now() - begin))
+
+        begin = datetime.now()
+        cmd_cols, cmd_rows = list(from_model(_model, random_seed=1))
+        print('from_model: {}'.format(datetime.now() - begin))
+
         cmd_cases = [dict(zip(cmd_cols, r)) for r in cmd_rows]
         assert_dict_set_equal(self, api_cases, cmd_cases)
 
@@ -180,27 +187,11 @@ class TestPopulateExclusionRules(unittest.TestCase):
             {'p1': True, 'p2': True},
             {'p1': True, 'p2': True, 'p3': True}
         ]
-        assert_dict_set_equal(self, [
+        final_rules = _populate_exclusion_rules(
+            params, compose_filter_funcs(filter_func), initial_rules)
+        expected_rules = [
             {'p1': True, 'p2': True},
             {'p1': True, 'p2': True, 'p3': True},
             {'p1': False, 'p2': False},
-        ], _populate_exclusion_rules(
-            params, compose_filter_funcs(filter_func), initial_rules))
-
-
-class TestCaseMatch(unittest.TestCase):
-    def test_simple(self):
-        rules = [
-            {'x': 10, 'y': 20},
-            {'x': 10, 'y': 30},
         ]
-
-        self.assertTrue(_case_match({'x': 10, 'y': 20}, rules))
-        self.assertTrue(_case_match({'x': 10, 'y': 30}, rules))
-        self.assertTrue(_case_match({'x': 10, 'y': 20, 'z': 100}, rules))
-
-        self.assertFalse(_case_match({'x': 10}, rules))
-        self.assertFalse(_case_match({'y': 20}, rules))
-        self.assertFalse(_case_match({'x': 20, 'y': 20}, rules))
-        self.assertFalse(_case_match({'x': 10, 'y': 40}, rules))
-        self.assertFalse(_case_match({'x': 10, 'y': 40, 'z': 100}, rules))
+        assert_dict_set_equal(self, expected_rules, final_rules)
