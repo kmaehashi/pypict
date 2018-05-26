@@ -1,4 +1,5 @@
 from datetime import datetime
+from collections import OrderedDict
 import unittest
 
 from pypict.cmd import from_model
@@ -141,7 +142,7 @@ class TestFromDict(unittest.TestCase):
     def test_usecase(self):
         begin = datetime.now()
         api_cases = list(from_dict(
-                        dict(_test_axes),
+                        OrderedDict(_test_axes),
                         compose_filter_funcs(
                             _validate_numpy_python,
                             _validate_ideep_python,
