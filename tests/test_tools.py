@@ -129,6 +129,14 @@ def _validate_cuda_nccl(cuda, nccl):
     return nccl in valid_nccls
 
 
+
+def assert_dict_set_equal(self, ds1, ds2):
+    self.assertEqual(
+        sorted([d.items() for d in ds1]),
+        sorted([d.items() for d in ds2]),
+    )
+
+
 class TestFromDict(unittest.TestCase):
     def test_usecase(self):
         api_cases = list(from_dict(
@@ -142,12 +150,12 @@ class TestFromDict(unittest.TestCase):
                         )))
         cmd_cols, cmd_rows = list(from_model(_model))
         cmd_cases = [dict(zip(cmd_cols, r)) for r in cmd_rows]
-        self.assertEqual(api_cases, cmd_cases)
+        assert_dict_set_equal(self, api_cases, cmd_cases)
 
 
 class TestProduct(unittest.TestCase):
     def test_simple(self):
-        self.assertEqual([
+        assert_dict_set_equal(self, [
             {'x': 10, 'y': 'a'},
             {'x': 10, 'y': 'b'},
             {'x': 10, 'y': 'c'},
@@ -172,7 +180,7 @@ class TestPopulateExclusionRules(unittest.TestCase):
             {'p1': True, 'p2': True},
             {'p1': True, 'p2': True, 'p3': True}
         ]
-        self.assertEqual([
+        assert_dict_set_equal(self, [
             {'p1': True, 'p2': True},
             {'p1': True, 'p2': True, 'p3': True},
             {'p1': False, 'p2': False},
