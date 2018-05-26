@@ -132,8 +132,8 @@ def _validate_cuda_nccl(cuda, nccl):
 
 def assert_dict_set_equal(self, ds1, ds2):
     self.assertEqual(
-        sorted([d.items() for d in ds1]),
-        sorted([d.items() for d in ds2]),
+        sorted([tuple(e) for e in [d.items() for d in ds1]]),
+        sorted([tuple(e) for e in [d.items() for d in ds2]]),
     )
 
 
