@@ -1,0 +1,41 @@
+language: python
+
+python:
+    - 2.7
+    - 3.3
+    - 3.4
+    - 3.5
+    - 3.6
+
+before_install:
+    - env
+    - uname -a
+
+install:
+    # Install PICT
+    - git submodule init
+    - git submodule update
+    - pushd pict
+    - make libpict.so
+    - make pict
+    - export PATH=${PWD}:${PATH}
+    - export LD_LIBRARY_PATH=${PWD}:${LD_LIBRARY_PATH}
+    - export DYLD_LIBRARY_PATH=${LD_LIBRARY_PATH}
+    - popd
+
+    # Install dependencies
+    - pip install Cython
+
+    # Install Coverage Clients
+    - pip install coveralls
+
+script:
+    # Install
+    - pip install -e .
+
+    # Test
+    - coverage run -p setup.py test
+
+after_success:
+    - coverage combine
+    - coveralls
