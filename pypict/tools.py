@@ -8,6 +8,20 @@ def from_dict(params, filter_func=None, excludes=[], seeds=[],
               random_seed=None):
     """Generates pair-wise cases from given parameter dictionary."""
 
+    if random_seed is None or isinstance(random_seed, int):
+        return _from_dict(params, filter_func, excludes, seeds, random_seed)
+
+    # Find the best (smallest) test suite by trying multiple seeds.
+    best = None
+    for rs in random_seed:
+        case = _from_dict(params, filter_func, excludes, seeds, rs)
+        if best is None or len(case) < len(best):
+            best = case
+    return best
+
+
+
+def _from_dict(params, filter_func, excludes, seeds, random_seed):
     # Create PICT task.
     task = Task(seed=random_seed)
 
