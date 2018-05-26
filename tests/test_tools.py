@@ -152,7 +152,7 @@ class TestFromDict(unittest.TestCase):
         print('from_dict: {}'.format(datetime.now() - begin))
 
         begin = datetime.now()
-        cmd_cols, cmd_rows = list(from_model(_model))
+        cmd_cols, cmd_rows = list(from_model(_model, random_seed=1))
         print('from_model: {}'.format(datetime.now() - begin))
 
         cmd_cases = [dict(zip(cmd_cols, r)) for r in cmd_rows]
