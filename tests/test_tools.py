@@ -131,11 +131,19 @@ def _validate_cuda_nccl(cuda, nccl):
 
 
 
+def _dict_set_as_tuple(ds):
+    return sorted([tuple([(k, d[k]) for k in sorted(d.keys())]) for d in ds])
+
+
 def assert_dict_set_equal(self, ds1, ds2):
-    self.assertEqual(
-        sorted([tuple(e) for e in [d.items() for d in ds1]]),
-        sorted([tuple(e) for e in [d.items() for d in ds2]]),
-    )
+    self.assertEqual(_dict_set_as_tuple(ds1), _dict_set_as_tuple(ds2))
+
+
+class TestDictSetAsTuple(unittest.TestCase):
+    def test(self):
+        ds1 = [{'a': 3, 'b': 2}, {'a': 4, 'd': 10}]
+        ds2 = [{'d': 10, 'a': 4}, {'b': 2, 'a': 3}]
+        assert_dict_set_equal(self, ds1, ds2)
 
 
 class TestFromDict(unittest.TestCase):
