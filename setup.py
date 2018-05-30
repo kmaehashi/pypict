@@ -45,7 +45,7 @@ setup(
     name='pypict',
     version=__version__,
     description='pypict: Python binding for Microsoft PICT',
-    long_description=open('README.md').read(),
+    long_description=open('README.rst').read(),
     author='Kenichi Maehashi',
     author_email='webmaster@kenichimaehashi.com',
     url='https://github.com/kmaehashi/pypict',
