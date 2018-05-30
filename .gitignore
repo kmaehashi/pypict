@@ -105,3 +105,4 @@ venv.bak/
 
 # Project-specific
 pypict/capi.cpp
+pypict/pict
