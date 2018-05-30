@@ -1,12 +1,23 @@
 import csv
 import io
+import os
 import subprocess
 import tempfile
 
 
+_PICT = 'pict'
+
+
+def _get_pict_command():
+    pictcmd = os.path.join(os.path.dirname(__file__), _PICT)
+    if os.path.exists(pictcmd):
+        return pictcmd
+    return _PICT
+
+
 def _pict(model_file, order=None, random_seed=None):
     # TODO: support more options
-    cmdline = ['pict', model_file]
+    cmdline = [_get_pict_command(), model_file]
     if order is not None:
         cmdline += ['/o:{}'.format(order)]
     if random_seed is not None:

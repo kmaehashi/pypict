@@ -1,9 +1,14 @@
 #!/usr/bin/env python
 
+import shutil
 import subprocess
+import sys
 
 from setuptools import setup, Command, Extension
 from Cython.Build import cythonize
+
+
+package_command = False
 
 
 class BuildPictCommand(Command):
@@ -18,7 +23,19 @@ class BuildPictCommand(Command):
         pass
 
     def run(self):
+        subprocess.check_call(['make', '-C', 'pict', 'clean'])
         subprocess.check_call(['make', '-C', 'pict', 'libpict.so'])
+        if package_command:
+            subprocess.check_call(['make', '-C', 'pict', 'pict'])
+            shutil.copy2('pict/pict', 'pypict/pict')
+
+
+package_data = {}
+
+if '--package-command' in sys.argv:
+    sys.argv.remove('--package-command')
+    package_command = True
+    package_data = {'pypict': ['pict']}
 
 
 with open('pypict/_version.py') as f:
@@ -35,6 +52,7 @@ setup(
     packages=[
         'pypict',
     ],
+    package_data=package_data,
     test_suite='tests',
     ext_modules=cythonize(
         Extension(
