@@ -22,14 +22,14 @@ Installation
 ------------
 
 Wheels (binary distribution) are available for Linux.
-PICT shared library and command is included in wheels.
+PICT shared library and command are included in wheels.
 
 ::
 
     $ pip install pypict
 
 On other platforms, you need to build from source.
-PICT source tree is registered as submodule of this repository.
+PICT source tree is registered as a submodule of this repository.
 ``python setup.py build_pict`` will run ``make`` command to build PICT shared library inside the tree.
 You need to manually install the shared library and command, or set path of the tree to the appropriate environment variables (``PATH``, ``LD_LIBRARY_PATH``, etc.)
 
@@ -48,7 +48,7 @@ APIs
 ----
 
 There are four different APIs provided in this library.
-Generally you only need to use Tools API (``pypict.tools``).
+Generally, you only need to use Tools API (``pypict.tools``).
 
 * Low-level API (``pypict.capi``) provides Python functions that map to each `PICT C API function <https://github.com/Microsoft/pict/blob/master/api/pictapi.h>`__.
 * High-level API (``pypict.api``) wraps the low-level API to provide automatic memory management.
