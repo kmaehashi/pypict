@@ -1,6 +1,6 @@
 |Travis|_ |PyPi|_
 
-.. |Travis| image:: https://api.travis-ci.org/kmaehashi/pypict.svg?branch=master
+.. |Travis| image:: https://api.travis-ci.com/kmaehashi/pypict.svg?branch=master
 .. _Travis: https://travis-ci.org/kmaehashi/pypict
 
 .. |PyPi| image:: https://badge.fury.io/py/pypict.svg
