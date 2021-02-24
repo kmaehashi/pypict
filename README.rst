@@ -15,8 +15,8 @@ Python binding library for `Microsoft PICT <https://github.com/Microsoft/pict>`_
 Requirements
 ------------
 
-* Microsoft PICT
-* Python 2.7, 3.4, 3.5 or 3.6
+* Microsoft PICT 3.7.1
+* Python 3.5 / 3.6 / 3.7 / 3.8 / 3.9
 
 Installation
 ------------
@@ -35,10 +35,8 @@ You need to manually install the shared library and command, or set path of the 
 
 ::
 
-    $ git clone https://github.com/kmaehashi/pypict.git
+    $ git clone --recursive https://github.com/kmaehashi/pypict.git pypict
     $ cd pypict
-    $ git submodule init
-    $ git submodule update
     $ python setup.py build_pict
     $ pip install -U .
     $ export PATH=${PWD}/pict:${PATH}
