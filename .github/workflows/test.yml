@@ -1,0 +1,46 @@
+on: [push, pull_request]
+
+jobs:
+    test:
+        runs-on: ubuntu-18.04
+        strategy:
+            matrix:
+                python-version: [3.5, 3.6]
+
+        steps:
+            - name: Git Checkout
+              uses: actions/checkout@v2
+              with:
+                  submodules: recursive
+
+            - name: Setup Python
+              uses: actions/setup-python@v2
+              with:
+                  python-version: ${{ matrix.python-version }}
+
+            - name: Build PICT
+              run: |
+                  pushd pict
+                  make libpict.so
+                  make pict
+                  echo "${PWD}" >> $GITHUB_PATH
+                  echo "LD_LIBRARY_PATH=${PWD}" >> $GITHUB_ENV
+                  popd
+
+            - name: Install dependencies
+              run: |
+                  pip install Cython
+
+            - name: Install PyPICT
+              run: |
+                  pip install -vvv .
+
+            - name: Show environment
+              run: |
+                  env
+                  python -V
+                  pip freeze
+
+            - name: Run tests
+              run: |
+                  python setup.py test
