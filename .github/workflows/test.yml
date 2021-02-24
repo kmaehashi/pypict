@@ -35,6 +35,12 @@ jobs:
               run: |
                   pip install -vvv .
 
+            - name: Show environment
+              run: |
+                  env
+                  python -V
+                  pip freeze
+
             - name: Run tests
               run: |
                   coverage run -p setup.py test
