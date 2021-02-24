@@ -46,6 +46,8 @@ jobs:
                   coverage run -p setup.py test
 
             - name: Submit coverage report
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
                   coverage combine
                   coveralls
