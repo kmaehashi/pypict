@@ -27,9 +27,9 @@ jobs:
                   echo "LD_LIBRARY_PATH=${PWD}" >> $GITHUB_ENV
                   popd
 
-            - name: Install Python libraries
+            - name: Install dependencies
               run: |
-                  pip install Cython coveralls
+                  pip install Cython
 
             - name: Install PyPICT
               run: |
@@ -43,11 +43,4 @@ jobs:
 
             - name: Run tests
               run: |
-                  coverage run -p setup.py test
-
-            - name: Submit coverage report
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: |
-                  coverage combine
-                  coveralls
+                  python setup.py test
