@@ -24,7 +24,7 @@ export LD_LIBRARY_PATH=\${PWD}/pict:\${LD_LIBRARY_PATH}
 
 pip install --user 'Cython==0.29.22'
 rm -rf dist
-python setup.py build_pict test bdist_wheel --package-command
+python setup.py build_pict test bdist_wheel
 
 auditwheel --verbose repair dist/*-*-${PYTHON}-linux_x86_64.whl
 "
