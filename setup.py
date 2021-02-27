@@ -8,9 +8,6 @@ from setuptools import setup, Command, Extension
 from Cython.Build import cythonize
 
 
-package_command = False
-
-
 class BuildPictCommand(Command):
 
     description = 'build PICT shared library'
@@ -25,17 +22,6 @@ class BuildPictCommand(Command):
     def run(self):
         subprocess.check_call(['make', '-C', 'pict', 'clean'])
         subprocess.check_call(['make', '-C', 'pict', 'libpict.so'])
-        if package_command:
-            subprocess.check_call(['make', '-C', 'pict', 'pict'])
-            shutil.copy2('pict/pict', 'pypict/pict')
-
-
-package_data = {}
-
-if '--package-command' in sys.argv:
-    sys.argv.remove('--package-command')
-    package_command = True
-    package_data = {'pypict': ['pict']}
 
 
 with open('pypict/_version.py') as f:
@@ -53,7 +39,6 @@ setup(
     packages=[
         'pypict',
     ],
-    package_data=package_data,
     test_suite='tests',
     python_requires='>=3.5.0',
     ext_modules=cythonize(
