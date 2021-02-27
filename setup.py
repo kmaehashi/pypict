@@ -62,7 +62,8 @@ setup(
             include_dirs=['pict/api'],
             library_dirs=['pict'],
             libraries=['pict'],
-        )
+        ),
+        language_level=3,
     ),
     cmdclass={
         'build_pict': BuildPictCommand
