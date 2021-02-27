@@ -18,7 +18,7 @@ def _get_pict_command():
     return _PICT
 
 
-def _pict(model_file, subprocess=True, order=None, random_seed=None):
+def _pict(model_file, order=None, random_seed=None, *, subprocess=True):
     # TODO: support more options
     cmdline = [_get_pict_command(), model_file]
     if order is not None:
