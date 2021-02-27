@@ -5,6 +5,19 @@ Python wrapper for PICT C/API.
 """
 
 from libc.stdlib cimport malloc, free
+from libc.stddef cimport wchar_t
+from cpython.mem cimport PyMem_Free
+
+
+cdef extern from "<string>" namespace "std":
+    cdef cppclass wstring:
+        wstring()
+        wchar_t* data()
+
+
+cdef extern from "Python.h":
+    wchar_t* PyUnicode_AsWideCharString(object, Py_ssize_t*)
+    object PyUnicode_FromWideChar(wchar_t*, Py_ssize_t)
 
 
 cdef extern from "pictapi.h":
@@ -101,6 +114,10 @@ cdef extern from "pictapi.h":
         const PICT_HANDLE model)
 
 
+cdef extern from "pypict_pict_clidll.h":
+    int PictExecuteCLI "execute" (int argc, wchar_t* args[], wstring& output)
+
+
 ##################################################
 # Constants
 ##################################################
@@ -126,7 +143,7 @@ cdef void check_retcode(PICT_RET_CODE code) except *:
 
 
 ##################################################
-# Interface
+# Interface (API)
 ##################################################
 
 
@@ -249,3 +266,28 @@ cpdef void attachChildModel(
 
 cpdef void deleteModel(size_t model) except *:
     PictDeleteModel(<PICT_HANDLE>model)
+
+
+##################################################
+# Interface (CLI)
+##################################################
+
+cpdef str execute(list args):
+    cdef int c_argc = -1
+    cdef wchar_t** c_args = NULL
+    cdef wstring c_output
+
+    c_argc = len(args) + 1
+    c_args = <wchar_t**>malloc(sizeof(wchar_t*) * c_argc)
+    if c_args == NULL:
+        raise MemoryError()
+    try:
+        c_args[0] = PyUnicode_AsWideCharString("", NULL)
+        for i in range(1, c_argc):
+            c_args[i] = PyUnicode_AsWideCharString(args[i-1], NULL)
+        PictExecuteCLI(c_argc, c_args, c_output)
+        return PyUnicode_FromWideChar(c_output.data(), -1)
+    finally:
+        for i in range(c_argc):
+            PyMem_Free(c_args[i])
+        free(c_args)
