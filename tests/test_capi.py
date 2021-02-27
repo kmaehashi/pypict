@@ -1,3 +1,4 @@
+import tempfile
 import unittest
 
 from pypict import capi
@@ -46,6 +47,16 @@ class TestCAPI(unittest.TestCase):
         capi.deleteModel(model1)
         #capi.deleteModel(model2)
         #capi.deleteModel(model3)
+
+    def test_execute(self):
+        with tempfile.NamedTemporaryFile() as f:
+            f.write(b'''
+                X: 1
+                Y: 2
+            ''')
+            f.flush()
+            output = capi.execute([f.name])
+            assert output == 'X\tY\n1\t2\n'
 
     def test_usecase_simple(self):
         task = capi.createTask()
