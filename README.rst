@@ -21,8 +21,8 @@ Requirements
 Installation
 ------------
 
-Wheels (binary distribution) are available for Linux.
-PICT shared library and command are included in wheels.
+Wheels (binary distribution) are available for Linux (x86_64).
+The PICT shared library is included in wheels.
 
 ::
 
@@ -45,19 +45,73 @@ You need to manually install the shared library and command, or set path of the 
 APIs
 ----
 
-There are four different APIs provided in this library.
-Generally, you only need to use Tools API (``pypict.tools``).
+There are different layers of API provided in this library.
 
-* Low-level API (``pypict.capi``) provides Python functions that map to each `PICT C API function <https://github.com/Microsoft/pict/blob/master/api/pictapi.h>`__.
-* High-level API (``pypict.api``) wraps the low-level API to provide automatic memory management.
-* Tools API (``pypict.tools``) wraps the high-level API to provide convenient features.
-* Command API (``pypict.cmd``) is a thin wrapper for ``pict`` command.
-  This API uses PICT command directly instead of PICT shared library.
+Low-level API (``pypict.capi``)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Example
--------
+Low-level API provides Python functions that map to each `PICT C API function <https://github.com/Microsoft/pict/blob/master/api/pictapi.h>`__.
 
-Here is an example usage of Tools API to generate pair-wise patterns from parameter set.
+.. code-block:: python
+
+    >>> import pypict.capi
+    >>> task = pypict.capi.createTask()
+    >>> print(task)
+    14042112
+    >>> pypict.capi.deleteTask(task)
+
+CLIDLL API (``pypict.capi.execute``), which accepts a PICT command line arguments and returns the output, is also available.
+
+.. code-block:: python
+
+    >>> import pypict.capi
+    >>> output = pypict.capi.execute(['example/example.model', '/o:2'])
+    >>> print(output)
+    Type    Size    Format method   File system     Cluster size    Compression
+    Mirror  100     Quick           FAT             2048            Off
+    ...
+
+Note that CLIDLL API directly writes to the stderr when warnings are generated.
+
+You can use ``pypict`` module as a command that behaves like PICT command line tool (e.g., ``python -m pypict example/example.model /o:2``).
+
+High-level API (``pypict.api``)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+High-level API wraps the low-level API to provide automatic memory management with RAII API.
+
+.. code-block:: python
+
+    >>> import pypict.api
+    >>> task = pypict.api.Task()
+    >>> task.model.add_parameter(2)
+    19976288
+    >>> task.model.add_parameter(3)
+    20013488
+    >>> list(task.generate())
+    [[1, 0], [0, 1], [1, 1], [0, 2], [1, 2], [0, 0]]
+
+Command API (``pypict.cmd``)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Command API wraps the CLIDLL API.
+
+.. code-block:: python
+
+    >>> import pypict.cmd
+    >>> pypict.cmd.from_model('''
+    ... X: 1, 2
+    ... Y: 3, 4
+    ... ''')
+    (['X', 'Y'], [['2', '4'], ['2', '3'], ['1', '4'], ['1', '3']])
+
+Tools API (``pypict.tools``) - deprecated
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Tools API wraps the high-level API to provide convenient features.
+
+This API is deprecated since v0.2.0 as it does not scale with the model size.
+Use  Command API instead.
 
 .. code-block:: python
 
