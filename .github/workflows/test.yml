@@ -33,7 +33,7 @@ jobs:
 
             - name: Install PyPICT
               run: |
-                  pip install -vvv .
+                  pip install -v .
 
             - name: Show environment
               run: |
@@ -44,3 +44,7 @@ jobs:
             - name: Run tests
               run: |
                   python setup.py test
+
+            - name: Run example
+              run: |
+                  python example/example.py
