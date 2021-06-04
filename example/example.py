@@ -6,11 +6,6 @@ import os
 ###
 import pypict.capi
 
-task = pypict.capi.createTask()
-print('Task handle', task)
-pypict.capi.deleteTask(task)
-print()
-
 output = pypict.capi.execute(
     [os.path.dirname(os.path.realpath(__name__)) + '/example.model', '/o:2'])
 print('Pair-wise cases using CAPI:')
@@ -40,5 +35,5 @@ out = pypict.cmd.from_model('''
 X: 1, 2
 Y: 3, 4
 ''')
-print('Pair-wise cases using Command API')
+print('Pair-wise cases using Command API:')
 print(out)
