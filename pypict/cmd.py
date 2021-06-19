@@ -18,7 +18,7 @@ def _get_pict_command():
     return _PICT
 
 
-def _pict(model_file, order=None, random_seed=None, *, subprocess=True):
+def _pict(model_file, order=None, random_seed=None, *, use_subprocess=True):
     # TODO: support more options
     cmdline = [_get_pict_command(), model_file]
     if order is not None:
@@ -26,16 +26,16 @@ def _pict(model_file, order=None, random_seed=None, *, subprocess=True):
     if random_seed is not None:
         cmdline += ['/r:{}'.format(random_seed)]
 
-    if subprocess:
+    if use_subprocess:
         return subprocess.check_output(cmdline).decode('utf-8')
     cmdline.pop(0)
     return pypict.capi.execute(cmdline)
 
 
-def from_model(model, *, subprocess=False, **kwargs):
+def from_model(model, *, use_subprocess=False, **kwargs):
     with tempfile.NamedTemporaryFile() as f:
         f.write(model.encode('utf-8'))
         f.flush()
-        output = _pict(f.name, subprocess=subprocess, **kwargs)
+        output = _pict(f.name, use_subprocess=use_subprocess, **kwargs)
     rows = [r for r in csv.reader(io.StringIO(output), delimiter='\t')]
     return rows[0], rows[1:]
