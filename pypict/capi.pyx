@@ -6,6 +6,7 @@ Python wrapper for PICT C/API.
 
 from libc.stdlib cimport malloc, free
 from libc.stddef cimport wchar_t
+from libc.stdint cimport uint32_t
 from cpython.mem cimport PyMem_Free
 
 
@@ -148,17 +149,20 @@ cdef void check_retcode(PICT_RET_CODE code) except *:
 
 
 cpdef size_t createTask() except *:
+    """createTask() -> int"""
     handle = PictCreateTask()
     if handle == NULL:
         raise MemoryError()
     return <size_t>handle
 
 
-cpdef void setRootModel(size_t task, size_t model) except *:
+cpdef void setRootModel(task: size_t, model: size_t) except *:
+    """setRootModel(task: int, model: int) -> None"""
     PictSetRootModel(<PICT_HANDLE>task, <PICT_HANDLE>model)
 
 
-cpdef void addExclusion(size_t task, tuple items) except *:
+cpdef void addExclusion(task: size_t, items: tuple) except *:
+    """addExclusion(task: int, items: Iterable[tuple[int, int]]) -> None"""
     cdef size_t count = len(items)
     cdef PICT_EXCLUSION_ITEM* packed = NULL
     if count == 0:
@@ -175,7 +179,8 @@ cpdef void addExclusion(size_t task, tuple items) except *:
         free(packed)
 
 
-cpdef void addSeed(size_t task, tuple items) except *:
+cpdef void addSeed(task: size_t, items: tuple) except *:
+    """addSeed(task: int, items: Iterable[tuple[int, int]]) -> None"""
     cdef size_t count = len(items)
     cdef PICT_SEED_ITEM* packed = NULL
     if count == 0:
@@ -192,11 +197,13 @@ cpdef void addSeed(size_t task, tuple items) except *:
         free(packed)
 
 
-cpdef void generate(size_t task) except *:
+cpdef void generate(task: size_t) except *:
+    """generate(task: int) -> None"""
     check_retcode(PictGenerate(<PICT_HANDLE>task))
 
 
-cpdef size_t[:] allocateResultBuffer(size_t task) except *:
+cpdef size_t[:] allocateResultBuffer(task: size_t) except *:
+    """allocateResultBuffer(task: int) -> memoryview"""
     cdef size_t paramCount = PictGetTotalParameterCount(<PICT_HANDLE>task)
     buf = PictAllocateResultBuffer(<PICT_HANDLE>task)
     if buf == NULL:
@@ -204,25 +211,30 @@ cpdef size_t[:] allocateResultBuffer(size_t task) except *:
     return <size_t[:paramCount]>buf
 
 
-cpdef void freeResultBuffer(size_t[:] resultRow) except *:
+cpdef void freeResultBuffer(resultRow: size_t[:]) except *:
+    """freeResultBuffer(resultRow: memoryview) -> None"""
     PictFreeResultBuffer(<PICT_RESULT_ROW>&resultRow[0])
 
 
-cpdef void resetResultFetching(size_t task) except *:
+cpdef void resetResultFetching(task: size_t) except *:
+    """resetResultFetching(task: int) -> None"""
     PictResetResultFetching(<PICT_HANDLE>task)
 
 
-cpdef size_t getNextResultRow(size_t task, size_t[:] resultRow) except *:
+cpdef size_t getNextResultRow(task: size_t, resultRow: size_t[:]) except *:
+    """getNextResultRow(task: int, resultRow: memoryview) -> int"""
     return PictGetNextResultRow(
         <PICT_HANDLE>task, <PICT_RESULT_ROW>&resultRow[0])
 
 
-cpdef void deleteTask(size_t task) except *:
+cpdef void deleteTask(task: size_t) except *:
+    """deleteTask(task: int) -> None"""
     PictDeleteTask(<PICT_HANDLE>task)
 
 
 cpdef size_t createModel(
-        unsigned int randomSeed = PICT_DEFAULT_RANDOM_SEED) except *:
+        randomSeed: uint32_t = PICT_DEFAULT_RANDOM_SEED) except *:
+    """createModel(randomSeed: int = PICT_DEFAULT_RANDOM_SEED) -> int"""
     handle = PictCreateModel(randomSeed)
     if handle == NULL:
         raise MemoryError()
@@ -230,10 +242,11 @@ cpdef size_t createModel(
 
 
 cpdef size_t addParameter(
-        size_t model,
-        size_t valueCount,
-        unsigned int order = PICT_PAIRWISE_GENERATION,
-        tuple valueWeights = None) except *:
+        model: size_t,
+        valueCount: size_t,
+        order: uint32_t = PICT_PAIRWISE_GENERATION,
+        valueWeights: tuple = None) except *:
+    """addParameter(model: int, valueCount: int, order: int = PICT_PAIRWISE_GENERATION, valueWeights: Optional[Iterable[int]] = None) -> int"""
     cdef unsigned int* packed = NULL
     try:
         if valueWeights is not None:
@@ -252,19 +265,22 @@ cpdef size_t addParameter(
         free(packed)
 
 
-cpdef size_t getTotalParameterCount(size_t task) except *:
+cpdef size_t getTotalParameterCount(task: size_t) except *:
+    """getTotalParameterCount(task: int) -> int"""
     return <size_t>PictGetTotalParameterCount(<PICT_HANDLE>task)
 
 
 cpdef void attachChildModel(
-        size_t modelParent,
-        size_t modelChild,
-        unsigned int order = PICT_PAIRWISE_GENERATION) except *:
+        modelParent: size_t,
+        modelChild: size_t,
+        order: uint32_t = PICT_PAIRWISE_GENERATION) except *:
+    """attachChildModel(modelParent: int, modelChild: int, order: int = PICT_PAIRWISE_GENERATION) -> None"""
     check_retcode(PictAttachChildModel(
         <PICT_HANDLE>modelParent, <PICT_HANDLE>modelChild, order))
 
 
-cpdef void deleteModel(size_t model) except *:
+cpdef void deleteModel(model: size_t) except *:
+    """deleteModel(model: int) -> None"""
     PictDeleteModel(<PICT_HANDLE>model)
 
 
@@ -272,7 +288,8 @@ cpdef void deleteModel(size_t model) except *:
 # Interface (CLI)
 ##################################################
 
-cpdef str execute(list args):
+cpdef str execute(args: list):
+    """execute(args: list[str]) -> str"""
     cdef int c_argc = -1
     cdef wchar_t** c_args = NULL
     cdef wstring c_output

@@ -51,6 +51,9 @@ setup(
         ),
         language_level=3,
     ),
+    package_data={
+        'pypict': ['py.typed', 'capi.pyi'],
+    },
     cmdclass={
         'build_pict': BuildPictCommand
     },
