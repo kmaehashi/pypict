@@ -1,44 +1,28 @@
 import numbers
-from typing import Iterable, Iterator, List, Optional, Tuple, Type, Union
+from typing import Iterable, List, Optional, Tuple, Union
 
-from pypict.builder._constraint import _Relation, _ValueSet
+from pypict.builder import _constraint
+from pypict.builder._types import NumericType, StringType, DataTypes
 
 
-NumericType = numbers.Real
-StringType = str
-DataTypes = Union[NumericType, StringType]
+# Values can be a list of (literals or tuple of (literal, weight)).
+ValuesType = Iterable[Union[DataTypes, Tuple[DataTypes, int]]]
 
 
 class Parameter:
-    def __init__(
-            self,
-            name: str,
-            values: Iterable[Union[DataTypes, Tuple[DataTypes, int]]],
-            *,
-            aliases: Optional[Iterable[str]] = None):
-        if aliases is None:
-            aliases = []
-        numeric = self._check_values(values)
-
-        self._check_valid_name(name)
-        for x in aliases:
-            self._check_valid_name(x)
-
+    def __init__(self, name: str, values: ValuesType):
+        # TODO support aliases
+        if ':' in name:
+            raise ValueError(f'invalid parameter name: {name}')
+        is_numeric = self._check_values(values)
         self._name = name
         self._values = values
-        self._aliases = aliases
-        self._numeric = numeric
+        self._is_numeric = is_numeric
 
     @staticmethod
-    def _check_valid_name(name):
-        if '[' in name or ']' in name:
-            raise ValueError(f'invalid parameter name: {name}')
-
-    @staticmethod
-    def _check_values(
-            values: Iterable[Union[DataTypes, Tuple[DataTypes, int]]]) -> bool:
-        numeric = True
-        for i, x in enumerate(values):
+    def _check_values(values: ValuesType) -> bool:
+        is_numeric = True
+        for x in values:
             if isinstance(x, tuple):
                 value, weight = x
             else:
@@ -46,71 +30,78 @@ class Parameter:
             if isinstance(value, NumericType):
                 pass
             elif isinstance(value, StringType):
-                numeric = False
+                is_numeric = False
             else:
                 raise ValueError(
-                    f'unsupported data type at index {i}: {value} ({type(value)})')
+                    f'expected numeric or string but got {value} of {type(value)}')
             if not isinstance(weight, int):
-                raise ValueError
-        return numeric
+                raise ValueError(f'weight must be int, but got {weight} of {type(weight)}')
+        return is_numeric
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.to_string()
 
-    def __repr__(self):
-        return self.to_string()  # TODO
+    def __repr__(self) -> str:
+        return f'<PICT parameter ({self._name})>'
 
-    def to_string(self, separator=','):
-        values = f'{separator} '.join([str(x) for x in self._values])
+    def to_string(self, separator: str = ',') -> str:
+        values = f'{separator} '.join([
+            f'{x[0]} ({x[1]})' if isinstance(x, tuple) else str(x)
+            for x in self._values
+        ])
         return f'{self._name}: {values}'
 
-    def _check_operand(self, other, *, allow_string=False):
+    def _check_operand(
+            self,
+            other: Union[DataTypes, 'Parameter'],
+            *,
+            no_string: bool = False):
         if isinstance(other, Parameter):
-            if self._numeric != other._numeric:
-                raise ValueError
+            if self._is_numeric != other._is_numeric:
+                raise ValueError('cannot compare numeric and non-numeric parameters')
         elif isinstance(other, NumericType):
-            if not self._numeric:
-                raise ValueError
+            if not self._is_numeric:
+                raise ValueError('cannot compare string-typed parameter with numeric constant')
         elif isinstance(other, StringType):
-            if not allow_string:
-                raise ValueError
-            if self._numeric:
-                raise ValueError
+            if no_string:
+                raise ValueError('strings cannot be compared')
+            if self._is_numeric:
+                raise ValueError('cannot compare numeric-typed parameter with string constant')
         else:
-            raise ValueError
+            raise ValueError(f'cannot compare with {other} of {type(other)}')
+
+    def __gt__(self, other: Union[NumericType, 'Parameter']):
+        self._check_operand(other, no_string=True)
+        return _constraint._Relation(self, '>', other)
+
+    def __ge__(self, other: Union[NumericType, 'Parameter']):
+        self._check_operand(other, no_string=True)
+        return _constraint._Relation(self, '>=', other)
+
+    def __lt__(self, other: Union[NumericType, 'Parameter']):
+        self._check_operand(other, no_string=True)
+        return _constraint._Relation(self, '<', other)
+
+    def __le__(self, other: Union[NumericType, 'Parameter']):
+        self._check_operand(other, no_string=True)
+        return _constraint._Relation(self, '<=', other)
 
     def __eq__(self, other: Union[DataTypes, 'Parameter']):
-        self._check_operand(other, allow_string=True)
-        return _Relation(self, '=', other)
+        self._check_operand(other)
+        return _constraint._Relation(self, '=', other)
 
     def __ne__(self, other: Union[DataTypes, 'Parameter']):
-        self._check_operand(other, allow_string=True)
-        return _Relation(self, '<>', other)
-
-    def __gt__(self, other: Union[DataTypes, 'Parameter']):
         self._check_operand(other)
-        return _Relation(self, '>', other)
+        return _constraint._Relation(self, '<>', other)
 
-    def __ge__(self, other: Union[DataTypes, 'Parameter']):
-        self._check_operand(other)
-        return _Relation(self, '>=', other)
-
-    def __lt__(self, other: Union[DataTypes, 'Parameter']):
-        self._check_operand(other)
-        return _Relation(self, '<', other)
-
-    def __le__(self, other: Union[DataTypes, 'Parameter']):
-        self._check_operand(other)
-        return _Relation(self, '<=', other)
-
-    def in_(self, *values: DataTypes):
+    def IN(self, *values: DataTypes):
         for x in values:
-            self._check_operand(x, allow_string=True)
-        return _Relation(self, 'IN', _ValueSet(values))
+            self._check_operand(x)
+        return _constraint._Relation(self, 'IN', _constraint._ValueSet(values))
 
-    def like(self, value):
-        if self._numeric:
-            raise ValueError
+    def LIKE(self, value: StringType):
+        if self._is_numeric:
+            raise ValueError('LIKE operator is only for strings')
         if not isinstance(value, StringType):
-            raise ValueError
-        return _Relation(self, 'LIKE', value)
+            raise ValueError(f'expected wildcard pattern string but got {value} of {type(value)}')
+        return _constraint._Relation(self, 'LIKE', value)

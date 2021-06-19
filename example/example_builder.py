@@ -1,4 +1,4 @@
-from pypict.builder import Model, Parameter, IF, AND, OR, NOT
+from pypict.builder import Model, Parameter, IF, ALL, ANY, NOT
 
 
 # https://github.com/microsoft/pict/blob/main/doc/pict.md
@@ -17,15 +17,18 @@ model = Model().parameters(
 
     size < 10000,
     compression == 'OFF',
-    filesys.like('FAT*'),
+    filesys.LIKE('FAT*'),
 
-    IF(cluster_size.in_(512, 1024, 2048)).THEN(compression == 'off'),
-    IF(filesys.in_('FAT', 'FAT32')).THEN(compression == 'off'),
+    IF(cluster_size.IN(512, 1024, 2048)).THEN(compression == 'off'),
+    IF(filesys.IN('FAT', 'FAT32')).THEN(compression == 'off'),
 
     IF(
-        OR(
+        ANY(
             filesys != 'NTFS',
-            AND(filesys == 'NTFS', cluster_size > 4096),
+            ALL(
+                filesys == 'NTFS',
+                cluster_size > 4096,
+            ),
         )
     ).THEN(compression == 'Off'),
 )

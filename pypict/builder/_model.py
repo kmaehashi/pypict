@@ -6,9 +6,9 @@ from pypict.builder._constraint import _Constraint
 
 class Model:
     def __init__(self):
-        self._params = []
-        self._submodels = []
-        self._constraints = []
+        self._params: List[Parameter] = []
+        self._submodels: List[_SubModel] = []
+        self._constraints: List[_Constraint] = []
 
     def parameters(self, *params: Parameter) -> 'Model':
         self._params += params
@@ -22,8 +22,8 @@ class Model:
         self._constraints += constraints
         return self
 
-    def to_string(self):
-        lines = []
+    def to_string(self) -> str:
+        lines: List[str] = []
 
         # Parameter definitions
         if len(self._params) == 0:
@@ -42,16 +42,17 @@ class Model:
         if len(self._constraints) != 0:
             for c in self._constraints:
                 lines.append(c.to_string() + ';')
-        
+                lines.append('')
+
         return '\n'.join(lines)
 
 
 class _SubModel:
-    def __init__(self, params, order=None):
+    def __init__(self, params: Tuple[Parameter], order: Optional[int] = None):
         self._params = params
         self._order = order
 
-    def to_string(self):
+    def to_string(self) -> str:
         return (
             '{ ' +
                 ', '.join([param._name for param in self._params]) +
