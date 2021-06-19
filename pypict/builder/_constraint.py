@@ -2,6 +2,12 @@
 import pypict.builder
 
 
+"""
+Implements the constraints grammar as defined in:
+https://github.com/microsoft/pict/blob/main/doc/pict.md
+"""
+
+
 class _Constraint:
     def to_string(self) -> str:
         raise NotImplemented
@@ -10,7 +16,7 @@ class _Constraint:
         return self.to_string()
 
     def __repr__(self) -> str:
-        return f'<PICT Constraint ("{str(self)}")>'
+        return f'<PICT constraint ("{str(self)}")>'
 
 
 class _Relation(_Constraint):
