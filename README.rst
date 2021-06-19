@@ -104,27 +104,3 @@ Command API wraps the CLIDLL API.
     ... Y: 3, 4
     ... ''')
     (['X', 'Y'], [['2', '4'], ['2', '3'], ['1', '4'], ['1', '3']])
-
-Tools API (``pypict.tools``) - deprecated
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Tools API wraps the high-level API to provide convenient features.
-
-This API is deprecated since v0.2.0 as it does not scale with the model size.
-Use  Command API instead.
-
-.. code-block:: python
-
-    import pypict.tools
-
-    params = {
-        "Type":          ["Single", "Span", "Stripe", "Mirror", "RAID-5"],
-        "Size":          ["10", "100", "500", "1000", "5000", "10000", "40000"],
-        "Format method": ["Quick", "Slow"],
-        "File system":   ["FAT", "FAT32", "NTFS"],
-        "Cluster size":  ["512", "1024", "2048", "4096", "8192", "16384", "32768", "65536"],
-        "Compression":   ["On", "Off"],
-    }
-
-    for case in pypict.tools.from_dict(params):
-        print(case)
