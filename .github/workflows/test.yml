@@ -34,7 +34,6 @@ jobs:
             - name: Install PyPICT
               run: |
                   pip install -v .
-                  echo "PYPICT_SRC_ROOT=${PWD}" >> $GITHUB_ENV
 
             - name: Show environment
               run: |
@@ -51,14 +50,14 @@ jobs:
 
             - name: Run tests
               run: |
-                  pushd /
+                  pushd tests
                   python -m pypict
-                  python -m pytest "${PYPICT_SRC_ROOT}/tests/*.py"
+                  python -m pytest --import-mode=append .
                   popd
 
             - name: Run example
               run: |
-                  pushd /
-                  python "${PYPICT_SRC_ROOT}/example/example.py"
-                  python "${PYPICT_SRC_ROOT}/example/example_capi.py"
+                  pushd example
+                  python example.py
+                  python example_capi.py
                   popd
