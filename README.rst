@@ -50,7 +50,7 @@ There are different layers of API provided in this library.
 Low-level API (``pypict.capi``)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Low-level API provides Python functions that map to each `PICT C API function <https://github.com/Microsoft/pict/blob/master/api/pictapi.h>`__.
+Low-level API provides Python functions that map to each `PICT C API function <https://github.com/Microsoft/pict/blob/main/api/pictapi.h>`__.
 
 .. code-block:: python
 
