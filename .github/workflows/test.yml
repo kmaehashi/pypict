@@ -29,7 +29,7 @@ jobs:
 
             - name: Install dependencies
               run: |
-                  pip install Cython mypy
+                  pip install Cython pytest mypy
 
             - name: Install PyPICT
               run: |
@@ -43,11 +43,12 @@ jobs:
 
             - name: Run tests
               run: |
-                  python setup.py test
+                  python -m pytest tests
 
             - name: Run example
               run: |
                   python example/example.py
+                  python example/example_capi.py
 
             - name: Run type checking
               run: |
