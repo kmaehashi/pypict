@@ -16,7 +16,7 @@ Requirements
 ------------
 
 * Microsoft PICT 3.7.1
-* Python 3.5 / 3.6 / 3.7 / 3.8 / 3.9
+* Python 3.6 / 3.7 / 3.8 / 3.9
 
 Installation
 ------------

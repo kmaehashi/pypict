@@ -40,7 +40,7 @@ setup(
         'pypict',
     ],
     test_suite='tests',
-    python_requires='>=3.5.0',
+    python_requires='>=3.6.0',
     ext_modules=cythonize(
         Extension(
             'pypict.capi',
