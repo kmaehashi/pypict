@@ -41,13 +41,6 @@ jobs:
                   python -V
                   pip freeze
 
-            - name: Run type checking
-              run: |
-                  mypy pypict example
-                  mypy --allow-untyped-defs tests
-                  bash stubgen.sh
-                  [[ $(git diff | wc -l) == 0 ]]
-
             - name: Run tests
               run: |
                   pushd tests
@@ -61,3 +54,10 @@ jobs:
                   python example.py
                   python example_capi.py
                   popd
+
+            - name: Run type checking
+              run: |
+                  mypy pypict example
+                  mypy --allow-untyped-defs tests
+                  bash stubgen.sh
+                  [[ $(git diff | wc -l) == 0 ]]
