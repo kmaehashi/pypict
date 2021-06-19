@@ -59,5 +59,6 @@ jobs:
               run: |
                   mypy pypict example
                   mypy --allow-untyped-defs tests
+                  pip install -v -e .
                   bash stubgen.sh
                   [[ $(git diff | wc -l) == 0 ]]
