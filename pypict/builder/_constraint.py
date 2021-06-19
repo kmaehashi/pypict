@@ -1,4 +1,3 @@
-
 import pypict.builder
 
 
@@ -67,13 +66,13 @@ class IF(_Constraint):
         self._const = const
         self._then = None
         self._else = None
-    
+
     def THEN(self, const: _Constraint) -> 'IF':
         if self._then is not None:
             raise ValueError
         self._then = const
         return self
-    
+
     def ELSE(self, const: _Constraint) -> 'IF':
         if self._then is None:
             raise ValueError
