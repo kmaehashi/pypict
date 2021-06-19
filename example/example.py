@@ -7,7 +7,7 @@ import os
 import pypict.capi
 
 output = pypict.capi.execute(
-    [os.path.dirname(os.path.realpath(__name__)) + '/example.model', '/o:2'])
+    [os.path.dirname(os.path.realpath(__file__)) + '/example.model', '/o:2'])
 print('Pair-wise cases using CAPI:')
 print(output)
 print()
