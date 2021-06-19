@@ -29,7 +29,7 @@ jobs:
 
             - name: Install dependencies
               run: |
-                  pip install Cython mypy
+                  pip install Cython pytest mypy
 
             - name: Install PyPICT
               run: |
@@ -41,15 +41,23 @@ jobs:
                   python -V
                   pip freeze
 
-            - name: Run tests
-              run: |
-                  python setup.py test
-
-            - name: Run example
-              run: |
-                  python example/example.py
-
             - name: Run type checking
               run: |
                   mypy pypict example
                   mypy --allow-untyped-defs tests
+                  bash stubgen.sh
+                  [[ $(git diff | wc -l) == 0 ]]
+
+            - name: Run tests
+              run: |
+                  pushd tests
+                  python -m pypict
+                  python -m pytest --import-mode=append .
+                  popd
+
+            - name: Run example
+              run: |
+                  pushd example
+                  python example.py
+                  python example_capi.py
+                  popd
