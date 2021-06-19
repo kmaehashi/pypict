@@ -52,6 +52,7 @@ jobs:
             - name: Run tests
               run: |
                   pushd /
+                  python -m pypict
                   pytest "${PYPICT_SRC_ROOT}/tests"
                   popd
 
