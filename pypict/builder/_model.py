@@ -41,7 +41,7 @@ class Model:
         # Constraint definitions
         if len(self._constraints) != 0:
             for c in self._constraints:
-                lines.append(c.to_string())
+                lines.append(c.to_string() + ';')
         
         return '\n'.join(lines)
 

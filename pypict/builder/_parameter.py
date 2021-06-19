@@ -1,8 +1,7 @@
 import numbers
 from typing import Iterable, Iterator, List, Optional, Tuple, Type, Union
 
-from pypict.builder._constraint import _Relation
-from pypict.builder._export import _literal, _ValueSet
+from pypict.builder._constraint import _Relation, _ValueSet
 
 
 NumericType = numbers.Real
@@ -104,10 +103,14 @@ class Parameter:
         self._check_operand(other)
         return _Relation(self, '<=', other)
 
-    def __in__(self, values: Iterable[DataTypes]):
+    def in_(self, *values: DataTypes):
+        for x in values:
+            self._check_operand(x, allow_string=True)
         return _Relation(self, 'IN', _ValueSet(values))
 
     def like(self, value):
-        if self._dtype != str:
+        if self._numeric:
+            raise ValueError
+        if not isinstance(value, StringType):
             raise ValueError
         return _Relation(self, 'LIKE', value)
