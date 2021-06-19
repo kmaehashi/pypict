@@ -29,7 +29,7 @@ jobs:
 
             - name: Install dependencies
               run: |
-                  pip install Cython
+                  pip install Cython mypy
 
             - name: Install PyPICT
               run: |
@@ -48,3 +48,8 @@ jobs:
             - name: Run example
               run: |
                   python example/example.py
+
+            - name: Run type checking
+              run: |
+                  mypy pypict example
+                  mypy --allow-untyped-defs tests
