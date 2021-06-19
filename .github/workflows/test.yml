@@ -34,6 +34,7 @@ jobs:
             - name: Install PyPICT
               run: |
                   pip install -v .
+                  echo "PYPICT_SRC_ROOT=${PWD}" >> $GITHUB_ENV
 
             - name: Show environment
               run: |
@@ -41,18 +42,22 @@ jobs:
                   python -V
                   pip freeze
 
-            - name: Run tests
-              run: |
-                  python -m pytest tests
-
-            - name: Run example
-              run: |
-                  python example/example.py
-                  python example/example_capi.py
-
             - name: Run type checking
               run: |
                   mypy pypict example
                   mypy --allow-untyped-defs tests
                   bash stubgen.sh
                   [[ $(git diff | wc -l) == 0 ]]
+
+            - name: Run tests
+              run: |
+                  pushd /
+                  pytest "${PYPICT_SRC_ROOT}/tests"
+                  popd
+
+            - name: Run example
+              run: |
+                  pushd /
+                  python "${PYPICT_SRC_ROOT}/example/example.py"
+                  python "${PYPICT_SRC_ROOT}/example/example_capi.py"
+                  popd
