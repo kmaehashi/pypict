@@ -3,7 +3,7 @@ import json
 from typing import Dict, Iterable, Optional, Union
 
 from pypict._builder import parameter
-from pypict._builder.types import NumericType, StringType, DataTypes
+from pypict._builder.dtype import NumericType, StringType, DataTypes
 
 
 """

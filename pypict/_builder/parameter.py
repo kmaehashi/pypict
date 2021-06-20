@@ -1,7 +1,7 @@
 from typing import Iterable, Tuple, Union
 
 from pypict._builder import constraint
-from pypict._builder.types import NumericType, StringType, DataTypes
+from pypict._builder.dtype import NumericType, StringType, DataTypes
 
 
 # Values can be a list of (literals or tuple of (literal, weight)).
