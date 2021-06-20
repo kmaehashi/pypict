@@ -99,7 +99,7 @@ class Parameter:
 
     def LIKE(self, value: StringType):
         if self._is_numeric:
-            raise ValueError('LIKE operator is only for strings')
+            raise ValueError('LIKE operator is only for string parameter')
         if not isinstance(value, StringType):
             raise ValueError(f'expected wildcard pattern string but got {value} of {type(value)}')
         return _constraint._Relation(self, 'LIKE', value)

@@ -21,6 +21,9 @@ class _Constraint:
     def __repr__(self) -> str:
         return f'<PICT constraint ("{str(self)}")>'
 
+    def __bool__(self) -> bool:
+        raise ValueError('cannot apply Python logical operators on constraints')
+
 
 class _Predicate(_Constraint):
     pass
@@ -67,7 +70,7 @@ def _check_predicates(*preds: _Predicate):
 
 
 class _LogicalOp(_Predicate):
-    _op: Optional[str] = None  # to be overridden
+    _op: str = ''  # to be overridden
 
     def __init__(self, *preds: _Predicate):
         _check_predicates(*preds)

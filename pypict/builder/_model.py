@@ -14,7 +14,7 @@ class Model:
         # TODO check uniqueness of names
         self._parameters += params
         return self
-    
+
     def submodel(self, params: Tuple[Parameter], order: Optional[int] = None) -> 'Model':
         self._submodels.append(_SubModel(params, order))
         return self
