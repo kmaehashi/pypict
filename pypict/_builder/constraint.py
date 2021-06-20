@@ -2,8 +2,8 @@ import enum
 import json
 from typing import Dict, Iterable, Optional, Union
 
-from pypict.builder import _parameter
-from pypict.builder._types import NumericType, StringType, DataTypes
+from pypict._builder import parameter
+from pypict._builder.types import NumericType, StringType, DataTypes
 
 
 """
@@ -46,9 +46,9 @@ class _Predicate(_Constraint):
 
 class _Relation(_Predicate):
     def __init__(self,
-            param: '_parameter.Parameter',
+            param: 'parameter.Parameter',
             op: _Operator,
-            operand: Union[DataTypes, '_parameter.Parameter', '_ValueSet']):
+            operand: Union[DataTypes, 'parameter.Parameter', '_ValueSet']):
         self._param = param
         self._op = op
         self._operand = operand
@@ -73,8 +73,8 @@ class _ValueSet:
         return '{ ' + ', '.join([_as_str(x) for x in self._values]) + ' }'
 
 
-def _as_str(v: Union[DataTypes, '_parameter.Parameter', '_ValueSet']) -> str:
-    if isinstance(v, _parameter.Parameter):
+def _as_str(v: Union[DataTypes, 'parameter.Parameter', '_ValueSet']) -> str:
+    if isinstance(v, parameter.Parameter):
         return f'[{v.name}]'
     elif isinstance(v, _ValueSet):
         return v.to_string()

@@ -1,7 +1,7 @@
 from typing import Iterable, Iterator, List, Optional, Tuple, Type, Union
 
-from pypict.builder._parameter import Parameter
-from pypict.builder._constraint import _Constraint
+from pypict._builder.parameter import Parameter
+from pypict._builder.constraint import _Constraint
 
 
 class Model:

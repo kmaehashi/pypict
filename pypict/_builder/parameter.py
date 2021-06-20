@@ -1,8 +1,8 @@
 import numbers
 from typing import Iterable, List, Optional, Tuple, Union
 
-from pypict.builder import _constraint
-from pypict.builder._types import NumericType, StringType, DataTypes
+from pypict._builder import constraint
+from pypict._builder.types import NumericType, StringType, DataTypes
 
 
 # Values can be a list of (literals or tuple of (literal, weight)).
@@ -70,36 +70,36 @@ class Parameter:
 
     def __gt__(self, other: Union[NumericType, 'Parameter']):
         self._check_operand(other, no_string=True)
-        return _constraint._Relation(self, _constraint._Operator._GT, other)
+        return constraint._Relation(self, constraint._Operator._GT, other)
 
     def __ge__(self, other: Union[NumericType, 'Parameter']):
         self._check_operand(other, no_string=True)
-        return _constraint._Relation(self, _constraint._Operator._GE, other)
+        return constraint._Relation(self, constraint._Operator._GE, other)
 
     def __lt__(self, other: Union[NumericType, 'Parameter']):
         self._check_operand(other, no_string=True)
-        return _constraint._Relation(self, _constraint._Operator._LT, other)
+        return constraint._Relation(self, constraint._Operator._LT, other)
 
     def __le__(self, other: Union[NumericType, 'Parameter']):
         self._check_operand(other, no_string=True)
-        return _constraint._Relation(self, _constraint._Operator._LE, other)
+        return constraint._Relation(self, constraint._Operator._LE, other)
 
     def __eq__(self, other: Union[DataTypes, 'Parameter']):
         self._check_operand(other)
-        return _constraint._Relation(self, _constraint._Operator._EQ, other)
+        return constraint._Relation(self, constraint._Operator._EQ, other)
 
     def __ne__(self, other: Union[DataTypes, 'Parameter']):
         self._check_operand(other)
-        return _constraint._Relation(self, _constraint._Operator._NE, other)
+        return constraint._Relation(self, constraint._Operator._NE, other)
 
     def IN(self, *values: DataTypes):
         for x in values:
             self._check_operand(x)
-        return _constraint._Relation(self, _constraint._Operator._IN, _constraint._ValueSet(values))
+        return constraint._Relation(self, constraint._Operator._IN, constraint._ValueSet(values))
 
     def LIKE(self, value: StringType):
         if self._is_numeric:
             raise ValueError('LIKE operator is only for string parameter')
         if not isinstance(value, StringType):
             raise ValueError(f'expected wildcard pattern string but got {value} of {type(value)}')
-        return _constraint._Relation(self, _constraint._Operator._LIKE, value)
+        return constraint._Relation(self, constraint._Operator._LIKE, value)
