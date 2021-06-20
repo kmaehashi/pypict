@@ -11,7 +11,6 @@ class Model:
         self._constraints: List[_Constraint] = []
 
     def parameters(self, *params: Parameter) -> 'Model':
-        # TODO check uniqueness of names
         self._parameters += params
         return self
 
@@ -29,6 +28,7 @@ class Model:
         # Parameter definitions
         if len(self._parameters) == 0:
             raise ValueError('no parameters are added to the model')
+        # TODO check uniqueness of names
         for p in self._parameters:
             lines.append(p.to_string())
         lines.append('')

@@ -70,36 +70,36 @@ class Parameter:
 
     def __gt__(self, other: Union[NumericType, 'Parameter']):
         self._check_operand(other, no_string=True)
-        return _constraint._Relation(self, '>', other)
+        return _constraint._Relation(self, _constraint._Operator._GT, other)
 
     def __ge__(self, other: Union[NumericType, 'Parameter']):
         self._check_operand(other, no_string=True)
-        return _constraint._Relation(self, '>=', other)
+        return _constraint._Relation(self, _constraint._Operator._GE, other)
 
     def __lt__(self, other: Union[NumericType, 'Parameter']):
         self._check_operand(other, no_string=True)
-        return _constraint._Relation(self, '<', other)
+        return _constraint._Relation(self, _constraint._Operator._LT, other)
 
     def __le__(self, other: Union[NumericType, 'Parameter']):
         self._check_operand(other, no_string=True)
-        return _constraint._Relation(self, '<=', other)
+        return _constraint._Relation(self, _constraint._Operator._LE, other)
 
     def __eq__(self, other: Union[DataTypes, 'Parameter']):
         self._check_operand(other)
-        return _constraint._Relation(self, '=', other)
+        return _constraint._Relation(self, _constraint._Operator._EQ, other)
 
     def __ne__(self, other: Union[DataTypes, 'Parameter']):
         self._check_operand(other)
-        return _constraint._Relation(self, '<>', other)
+        return _constraint._Relation(self, _constraint._Operator._NE, other)
 
     def IN(self, *values: DataTypes):
         for x in values:
             self._check_operand(x)
-        return _constraint._Relation(self, 'IN', _constraint._ValueSet(values))
+        return _constraint._Relation(self, _constraint._Operator._IN, _constraint._ValueSet(values))
 
     def LIKE(self, value: StringType):
         if self._is_numeric:
             raise ValueError('LIKE operator is only for string parameter')
         if not isinstance(value, StringType):
             raise ValueError(f'expected wildcard pattern string but got {value} of {type(value)}')
-        return _constraint._Relation(self, 'LIKE', value)
+        return _constraint._Relation(self, _constraint._Operator._LIKE, value)

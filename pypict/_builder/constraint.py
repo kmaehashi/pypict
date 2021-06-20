@@ -1,5 +1,6 @@
+import enum
 import json
-from typing import Iterable, Optional, Union
+from typing import Dict, Iterable, Optional, Union
 
 from pypict.builder import _parameter
 from pypict.builder._types import NumericType, StringType, DataTypes
@@ -11,8 +12,22 @@ https://github.com/microsoft/pict/blob/main/doc/pict.md
 """
 
 
+class _Operator(enum.Enum):
+    _GT = '>'
+    _GE = '>='
+    _LT = '<'
+    _LE = '<='
+    _EQ = '='
+    _NE = '<>'
+    _IN = 'IN'
+    _LIKE = 'LIKE'
+
+
 class _Constraint:
     def to_string(self) -> str:
+        raise NotImplemented
+
+    def evaluate(self, combination: Dict[str, DataTypes]) -> bool:
         raise NotImplemented
 
     def __str__(self) -> str:
@@ -32,14 +47,22 @@ class _Predicate(_Constraint):
 class _Relation(_Predicate):
     def __init__(self,
             param: '_parameter.Parameter',
-            op: str,
+            op: _Operator,
             operand: Union[DataTypes, '_parameter.Parameter', '_ValueSet']):
         self._param = param
         self._op = op
         self._operand = operand
 
     def to_string(self) -> str:
-        return f'{_as_str(self._param)} {self._op} {_as_str(self._operand)}'
+        return f'{_as_str(self._param)} {self._op.value} {_as_str(self._operand)}'
+
+    def evaluate(self, combination: Dict[str, DataTypes]) -> bool:
+        if self._param.name not in combination:
+            return True
+        value = combination[self._param.name]
+        # TODO
+        if self._op is _Operator._GT:
+            return value > self._operand
 
 
 class _ValueSet:
@@ -64,6 +87,8 @@ def _as_str(v: Union[DataTypes, '_parameter.Parameter', '_ValueSet']) -> str:
 
 
 def _check_predicates(*preds: _Predicate):
+    if len(preds) == 0:
+        raise ValueError('at least one predicate must be specified')
     for pred in preds:
         if not isinstance(pred, _Predicate):
             raise ValueError(f'expected predicate but got {pred} of {type(pred)}')
@@ -83,9 +108,15 @@ class _LogicalOp(_Predicate):
 class ALL(_LogicalOp):
     _op = 'AND'
 
+    def evaluate(self, combination) -> bool:
+        return all((p.evaluate(combination) for p in self._preds))
+
 
 class ANY(_LogicalOp):
     _op = 'OR'
+
+    def evaluate(self, combination) -> bool:
+        return any((p.evaluate(combination) for p in self._preds))
 
 
 class NOT(_Predicate):
@@ -95,6 +126,9 @@ class NOT(_Predicate):
 
     def to_string(self) -> str:
         return f'NOT {self._pred}'
+
+    def evaluate(self, combination: Dict[str, DataTypes]) -> bool:
+        return not self._pred.evaluate(combination)
 
 
 class IF(_Constraint):
@@ -127,3 +161,12 @@ class IF(_Constraint):
             f'\nTHEN {self._then}' +
             (f'\nELSE {self._else}' if self._else else '')
         )
+
+    def evaluate(self, combination) -> bool:
+        if self._then is None:
+            raise ValueError('cannot evaluate without THEN')
+        if self._if.evaluate(combination):
+            return self._then.evaluate(combination)
+        elif self._else is not None:
+            return self._else.evaluate(combination)
+        return True
