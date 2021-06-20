@@ -45,8 +45,6 @@ class TestCAPI(unittest.TestCase):
 
         # Children (model2 and model3) are deleted altogether.
         capi.deleteModel(model1)
-        #capi.deleteModel(model2)
-        #capi.deleteModel(model3)
 
     def test_execute(self):
         with tempfile.NamedTemporaryFile() as f:
