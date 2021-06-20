@@ -3,9 +3,11 @@ import unittest
 from pypict.builder import Model, Parameter
 from pypict.builder import IF
 
+
 class TestBuilder(unittest.TestCase):
     def test_basic_usecase(self):
-        type = Parameter('Type', ['Single', 'Span', 'Stripe', 'Mirror', 'RAID-5'])
+        type = Parameter(
+            'Type', ['Single', 'Span', 'Stripe', 'Mirror', 'RAID-5'])
         size = Parameter('Size', [10, 100, 500, 1000, 5000, 10000, 40000])
         filesys = Parameter('File System', ['FAT', 'FAT32', 'NTFS'])
 

@@ -1,5 +1,4 @@
-import numbers
-from typing import Iterable, List, Optional, Tuple, Union
+from typing import Iterable, Tuple, Union
 
 from pypict._builder import constraint
 from pypict._builder.types import NumericType, StringType, DataTypes
@@ -32,9 +31,12 @@ class Parameter:
                 is_numeric = False
             else:
                 raise ValueError(
-                    f'expected numeric or string but got {value} of {type(value)}')
+                    'expected numeric or string, '
+                    f'but got {value} of {type(value)}')
             if not isinstance(weight, int):
-                raise ValueError(f'weight must be int, but got {weight} of {type(weight)}')
+                raise ValueError(
+                    'weight must be int, '
+                    f'but got {weight} of {type(weight)}')
         return is_numeric
 
     def __str__(self) -> str:
@@ -56,15 +58,20 @@ class Parameter:
             no_string: bool = False):
         if isinstance(other, Parameter):
             if self._is_numeric != other._is_numeric:
-                raise ValueError('cannot compare numeric and non-numeric parameters')
+                raise ValueError(
+                    'cannot compare numeric and non-numeric parameters')
         elif isinstance(other, NumericType):
             if not self._is_numeric:
-                raise ValueError('cannot compare string-typed parameter with numeric constant')
+                raise ValueError(
+                    'cannot compare string-typed parameter '
+                    'with numeric constant')
         elif isinstance(other, StringType):
             if no_string:
                 raise ValueError('strings cannot be compared')
             if self._is_numeric:
-                raise ValueError('cannot compare numeric-typed parameter with string constant')
+                raise ValueError(
+                    'cannot compare numeric-typed parameter '
+                    'with string constant')
         else:
             raise ValueError(f'cannot compare with {other} of {type(other)}')
 
@@ -95,11 +102,14 @@ class Parameter:
     def IN(self, *values: DataTypes):
         for x in values:
             self._check_operand(x)
-        return constraint._Relation(self, constraint._Operator._IN, constraint._ValueSet(values))
+        return constraint._Relation(
+            self, constraint._Operator._IN, constraint._ValueSet(values))
 
     def LIKE(self, value: StringType):
         if self._is_numeric:
             raise ValueError('LIKE operator is only for string parameter')
         if not isinstance(value, StringType):
-            raise ValueError(f'expected wildcard pattern string but got {value} of {type(value)}')
+            raise ValueError(
+                'expected wildcard pattern string, '
+                f'but got {value} of {type(value)}')
         return constraint._Relation(self, constraint._Operator._LIKE, value)

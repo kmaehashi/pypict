@@ -9,7 +9,8 @@ def build_model():
     size = Parameter('Size', [10, 100, 500, 1000, 5000, 10000, 40000])
     format_method = Parameter('Format method', ['Quick', 'Slow'])
     filesys = Parameter('File System', ['FAT', 'FAT32', 'NTFS'])
-    cluster_size = Parameter('Cluster size', [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536])
+    cluster_size = Parameter(
+        'Cluster size', [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536])
     compression = Parameter('Compression', ['On', 'Off'])
 
     model = Model()
@@ -25,7 +26,7 @@ def build_model():
 
         compression == 'OFF',
 
-        filesys.LIKE('FAT*'),
+        NOT(filesys.LIKE('FAT*')),
 
         IF(cluster_size.IN(512, 1024, 2048)).THEN(compression == 'off'),
 

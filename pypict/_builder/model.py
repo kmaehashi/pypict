@@ -1,4 +1,4 @@
-from typing import Iterable, Iterator, List, Optional, Tuple, Type, Union
+from typing import List, Optional, Tuple
 
 from pypict._builder.parameter import Parameter
 from pypict._builder.constraint import _Constraint
@@ -14,7 +14,10 @@ class Model:
         self._parameters += params
         return self
 
-    def submodel(self, params: Tuple[Parameter], order: Optional[int] = None) -> 'Model':
+    def submodel(
+            self,
+            params: Tuple[Parameter],
+            order: Optional[int] = None) -> 'Model':
         self._submodels.append(_SubModel(params, order))
         return self
 
@@ -56,7 +59,7 @@ class _SubModel:
     def to_string(self) -> str:
         return (
             '{ ' +
-                ', '.join([param.name for param in self.params]) +
+            ', '.join([param.name for param in self.params]) +
             ' }' +
             '' if self.order is None else f' @ {self.order}'
         )

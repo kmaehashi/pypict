@@ -25,10 +25,10 @@ class _Operator(enum.Enum):
 
 class _Constraint:
     def to_string(self) -> str:
-        raise NotImplemented
+        raise NotImplementedError
 
     def evaluate(self, combination: Dict[str, DataTypes]) -> bool:
-        raise NotImplemented
+        raise NotImplementedError
 
     def __str__(self) -> str:
         return self.to_string()
@@ -37,7 +37,8 @@ class _Constraint:
         return f'<PICT constraint ("{str(self)}")>'
 
     def __bool__(self) -> bool:
-        raise ValueError('cannot apply Python logical operators on constraints')
+        raise ValueError(
+            'cannot apply Python logical operators on constraints')
 
 
 class _Predicate(_Constraint):
@@ -45,7 +46,8 @@ class _Predicate(_Constraint):
 
 
 class _Relation(_Predicate):
-    def __init__(self,
+    def __init__(
+            self,
             param: 'parameter.Parameter',
             op: _Operator,
             operand: Union[DataTypes, 'parameter.Parameter', '_ValueSet']):
@@ -54,7 +56,8 @@ class _Relation(_Predicate):
         self._operand = operand
 
     def to_string(self) -> str:
-        return f'{_as_str(self._param)} {self._op.value} {_as_str(self._operand)}'
+        return (f'{_as_str(self._param)} '
+                f'{self._op.value} {_as_str(self._operand)}')
 
     def evaluate(self, combination: Dict[str, DataTypes]) -> bool:
         if self._param.name not in combination:
@@ -91,7 +94,9 @@ def _check_predicates(*preds: _Predicate):
         raise ValueError('at least one predicate must be specified')
     for pred in preds:
         if not isinstance(pred, _Predicate):
-            raise ValueError(f'expected predicate but got {pred} of {type(pred)}')
+            raise ValueError(
+                'expected predicate, '
+                f'but got {pred} of {type(pred)}')
 
 
 class _LogicalOp(_Predicate):
