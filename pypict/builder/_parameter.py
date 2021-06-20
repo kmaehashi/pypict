@@ -14,10 +14,9 @@ class Parameter:
         # TODO support aliases
         if ':' in name:
             raise ValueError(f'invalid parameter name: {name}')
-        is_numeric = self._check_values(values)
-        self._name = name
-        self._values = values
-        self._is_numeric = is_numeric
+        self.name = name
+        self.values = values
+        self._is_numeric = self._check_values(values)
 
     @staticmethod
     def _check_values(values: ValuesType) -> bool:
@@ -42,14 +41,13 @@ class Parameter:
         return self.to_string()
 
     def __repr__(self) -> str:
-        return f'<PICT parameter ({self._name})>'
+        return f'<PICT parameter ({self.name})>'
 
     def to_string(self, separator: str = ',') -> str:
-        values = f'{separator} '.join([
+        return self.name + ': ' + f'{separator} '.join([
             f'{x[0]} ({x[1]})' if isinstance(x, tuple) else str(x)
-            for x in self._values
+            for x in self.values
         ])
-        return f'{self._name}: {values}'
 
     def _check_operand(
             self,

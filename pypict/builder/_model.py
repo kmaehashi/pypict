@@ -6,12 +6,13 @@ from pypict.builder._constraint import _Constraint
 
 class Model:
     def __init__(self):
-        self._params: List[Parameter] = []
+        self._parameters: List[Parameter] = []
         self._submodels: List[_SubModel] = []
         self._constraints: List[_Constraint] = []
 
     def parameters(self, *params: Parameter) -> 'Model':
-        self._params += params
+        # TODO check uniqueness of names
+        self._parameters += params
         return self
     
     def submodel(self, params: Tuple[Parameter], order: Optional[int] = None) -> 'Model':
@@ -26,9 +27,9 @@ class Model:
         lines: List[str] = []
 
         # Parameter definitions
-        if len(self._params) == 0:
+        if len(self._parameters) == 0:
             raise ValueError('no parameters are added to the model')
-        for p in self._params:
+        for p in self._parameters:
             lines.append(p.to_string())
         lines.append('')
 
@@ -49,13 +50,13 @@ class Model:
 
 class _SubModel:
     def __init__(self, params: Tuple[Parameter], order: Optional[int] = None):
-        self._params = params
-        self._order = order
+        self.params = params
+        self.order = order
 
     def to_string(self) -> str:
         return (
             '{ ' +
-                ', '.join([param._name for param in self._params]) +
+                ', '.join([param.name for param in self.params]) +
             ' }' +
-            '' if self._order is None else f' @ {self._order}'
+            '' if self.order is None else f' @ {self.order}'
         )

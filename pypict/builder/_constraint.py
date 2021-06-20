@@ -49,7 +49,7 @@ class _ValueSet:
 
 def _as_str(v: Union[DataTypes, '_parameter.Parameter', '_ValueSet']) -> str:
     if isinstance(v, _parameter.Parameter):
-        return f'[{v._name}]'
+        return f'[{v.name}]'
     elif isinstance(v, _ValueSet):
         return v.to_string()
     elif isinstance(v, NumericType):
