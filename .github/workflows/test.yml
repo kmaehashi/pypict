@@ -29,7 +29,7 @@ jobs:
 
             - name: Install dependencies
               run: |
-                  pip install Cython pytest mypy
+                  pip install Cython pytest flake8 mypy
 
             - name: Install PyPICT
               run: |
@@ -62,4 +62,8 @@ jobs:
                   mypy --allow-untyped-defs tests
                   pip install -v -e .
                   bash stubgen.sh
-                  [[ $(git diff | wc -l) == 0 ]]
+                  [[ $(git diff | wc -l) == 0 ]] && echo "No difference."
+
+            - name: Run coding style check
+              run: |
+                  flake8 .

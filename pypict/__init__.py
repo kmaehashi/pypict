@@ -1,7 +1,6 @@
-from pypict._version import __version__
+from pypict._version import __version__  # NOQA
 
-from pypict.capi import PAIRWISE_GENERATION
+from pypict.capi import PAIRWISE_GENERATION  # NOQA
+from pypict.api import Task  # NOQA
 
-from pypict.api import Task
-
-from pypict import builder
+from pypict import builder  # NOQA

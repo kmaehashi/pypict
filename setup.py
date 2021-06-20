@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-import shutil
 import subprocess
-import sys
 
 from setuptools import setup, Command, Extension
 from Cython.Build import cythonize
@@ -29,7 +27,7 @@ with open('pypict/_version.py') as f:
 
 setup(
     name='pypict',
-    version=__version__,
+    version=__version__,  # NOQA
     description='pypict: Python binding for Microsoft PICT',
     long_description=open('README.rst').read(),
     author='Kenichi Maehashi',
