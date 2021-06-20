@@ -51,7 +51,10 @@ class _Model:
             weights = tuple(weights)
         return capi.addParameter(self.handle, count, order, weights)
 
-    def attach_child_model(self, order: int, seed: Optional[int] = None) -> '_Model':
+    def attach_child_model(
+            self,
+            order: int,
+            seed: Optional[int] = None) -> '_Model':
         if seed is None:
             seed = capi.DEFAULT_RANDOM_SEED
         childModel = _Model(seed)

@@ -2,10 +2,9 @@ import csv
 import io
 import os
 import subprocess
-import sys
 import tempfile
 
-from typing import Any, Dict, Iterable, Optional, Tuple
+from typing import Any, Iterable, Optional, Tuple
 
 import pypict.capi
 
@@ -20,7 +19,12 @@ def _get_pict_command() -> str:
     return _PICT
 
 
-def _pict(model_file: str, order: Optional[int] = None, random_seed: Optional[int] = None, *, use_subprocess: bool = True) -> str:
+def _pict(
+        model_file: str,
+        order: Optional[int] = None,
+        random_seed: Optional[int] = None,
+        *,
+        use_subprocess: bool = True) -> str:
     # TODO: support more options
     cmdline = [_get_pict_command(), model_file]
     if order is not None:
@@ -34,7 +38,11 @@ def _pict(model_file: str, order: Optional[int] = None, random_seed: Optional[in
     return pypict.capi.execute(cmdline)
 
 
-def from_model(model: str, *, use_subprocess: bool = False, **kwargs: Any) -> Tuple[Iterable[str], Iterable[Iterable[str]]]:
+def from_model(
+        model: str,
+        *,
+        use_subprocess: bool = False,
+        **kwargs: Any) -> Tuple[Iterable[str], Iterable[Iterable[str]]]:
     with tempfile.NamedTemporaryFile() as f:
         f.write(model.encode('utf-8'))
         f.flush()
