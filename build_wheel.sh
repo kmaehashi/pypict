@@ -22,7 +22,7 @@ export PATH=/opt/python/${PYTHON}/bin:\${PATH}
 export HOME=/tmp
 export LD_LIBRARY_PATH=\${PWD}/pict:\${LD_LIBRARY_PATH}
 
-pip install --user 'Cython==0.29.22'
+pip install --user 'Cython==0.29.26'
 rm -rf dist
 python setup.py build_pict test bdist_wheel
 
