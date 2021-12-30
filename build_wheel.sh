@@ -11,18 +11,18 @@ function run_manylinux() {
     --user $(id -u):$(id -g) \
     --volume "${PKG_DIR}:/package" \
     --workdir /package \
-    quay.io/pypa/manylinux1_x86_64 \
+    quay.io/pypa/manylinux2014_x86_64 \
     "$@"
 }
 
 rm -rf dist wheelhouse
-for PYTHON in cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39; do
+for PYTHON in cp37-cp37m cp38-cp38 cp39-cp39 cp310-cp310; do
   run_manylinux sh -uex -c "
-export PATH=/opt/python/${PYTHON}/bin:\${PATH}
+export PATH=/opt/python/${PYTHON}/bin:\${PWD}/pict:\${PATH}
 export HOME=/tmp
 export LD_LIBRARY_PATH=\${PWD}/pict:\${LD_LIBRARY_PATH}
 
-pip install --user 'Cython==0.29.22'
+pip install --user 'Cython==0.29.26'
 rm -rf dist
 python setup.py build_pict test bdist_wheel
 

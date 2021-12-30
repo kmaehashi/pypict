@@ -2,10 +2,10 @@ on: [push, pull_request]
 
 jobs:
     test:
-        runs-on: ubuntu-18.04
+        runs-on: ubuntu-20.04
         strategy:
             matrix:
-                python-version: [3.6, 3.7, 3.8, 3.9]
+                python-version: ['3.7', '3.8', '3.9', '3.10']
 
         steps:
             - name: Git Checkout
@@ -66,3 +66,14 @@ jobs:
             - name: Run coding style check
               run: |
                   flake8 .
+    build-wheel:
+        runs-on: ubuntu-20.04
+        steps:
+            - name: Git Checkout
+              uses: actions/checkout@v2
+              with:
+                  submodules: recursive
+
+            - name: Build Wheel
+              run: |
+                  ./build_wheel.sh

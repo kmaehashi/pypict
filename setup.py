@@ -20,6 +20,7 @@ class BuildPictCommand(Command):
     def run(self):
         subprocess.check_call(['make', '-C', 'pict', 'clean'])
         subprocess.check_call(['make', '-C', 'pict', 'libpict.so'])
+        subprocess.check_call(['make', '-C', 'pict', 'pict'])
 
 
 with open('pypict/_version.py') as f:
@@ -38,7 +39,7 @@ setup(
         'pypict',
     ],
     test_suite='tests',
-    python_requires='>=3.6.0',
+    python_requires='>=3.7',
     ext_modules=cythonize(
         Extension(
             'pypict.capi',
