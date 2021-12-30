@@ -11,7 +11,7 @@ function run_manylinux() {
     --user $(id -u):$(id -g) \
     --volume "${PKG_DIR}:/package" \
     --workdir /package \
-    quay.io/pypa/manylinux1_x86_64 \
+    quay.io/pypa/manylinux2014_x86_64 \
     "$@"
 }
 
