@@ -20,6 +20,7 @@ class BuildPictCommand(Command):
     def run(self):
         subprocess.check_call(['make', '-C', 'pict', 'clean'])
         subprocess.check_call(['make', '-C', 'pict', 'libpict.so'])
+        subprocess.check_call(['make', '-C', 'pict', 'pict'])
 
 
 with open('pypict/_version.py') as f:
