@@ -18,7 +18,7 @@ function run_manylinux() {
 rm -rf dist wheelhouse
 for PYTHON in cp37-cp37m cp38-cp38 cp39-cp39 cp310-cp310; do
   run_manylinux sh -uex -c "
-export PATH=/opt/python/${PYTHON}/bin:\${PATH}
+export PATH=/opt/python/${PYTHON}/bin:\${PWD}/pict:\${PATH}
 export HOME=/tmp
 export LD_LIBRARY_PATH=\${PWD}/pict:\${LD_LIBRARY_PATH}
 
