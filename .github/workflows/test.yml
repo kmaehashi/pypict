@@ -3,9 +3,11 @@ on: [push, pull_request]
 
 jobs:
     test:
-        runs-on: ubuntu-20.04
+        name: test-${{ matrix.os }}-py${{ matrix.python-version }}
+        runs-on: ${{ matrix.os }}
         strategy:
             matrix:
+                os: [ubuntu-latest, windows-latest, macOS-latest]
                 python-version: ['3.7', '3.8', '3.9', '3.10']
 
         steps:
@@ -26,6 +28,7 @@ jobs:
                   make pict
                   echo "${PWD}" >> $GITHUB_PATH
                   echo "LD_LIBRARY_PATH=${PWD}" >> $GITHUB_ENV
+                  echo "DYLD_LIBRARY_PATH=${PWD}" >> $GITHUB_ENV
                   popd
 
             - name: Install dependencies
@@ -38,8 +41,6 @@ jobs:
 
             - name: Show environment
               run: |
-                  env
-                  python -V
                   pip freeze
 
             - name: Run tests
@@ -57,6 +58,7 @@ jobs:
                   popd
 
             - name: Run type checking
+              if: ${{ matrix.os }} == 'ubuntu-latest'
               run: |
                   mypy pypict example
                   mypy --allow-untyped-defs tests
@@ -67,6 +69,7 @@ jobs:
             - name: Run coding style check
               run: |
                   flake8 .
+
     build-wheel:
         runs-on: ubuntu-20.04
         steps:
