@@ -17,7 +17,7 @@ cdef extern from "<string>" namespace "std":
 
 
 cdef extern from "Python.h":
-    wchar_t* PyUnicode_AsWideCharString(object, Py_ssize_t*)
+    wchar_t* PyUnicode_AsWideCharString(object, Py_ssize_t*) except NULL
     object PyUnicode_FromWideChar(wchar_t*, Py_ssize_t)
 
 
