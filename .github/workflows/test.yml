@@ -54,6 +54,7 @@ jobs:
                   pushd example
                   python example.py
                   python example_capi.py
+                  python example_builder.py
                   popd
 
             - name: Run type checking
